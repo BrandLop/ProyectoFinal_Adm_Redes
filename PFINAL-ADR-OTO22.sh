@@ -47,6 +47,21 @@ process_menu() {
   return $op
 }
 
+backup()
+{
+	read -p "Nombre de usuario que se le realizara un respaldo: " user
+	homedir=$(cat /etc/passwd | grep "brandon" | cut -d ":" -f6)
+	echo "El directorio home del usuario $user es $homedir "
+	echo "Creando archivo de respaldo..."
+	date=$(date +%F)
+  time=$(date +%T)
+	tar --force-local -cf ${user}-${date}-${time}.tar $homedir
+  sleep 5
+	echo "Respaldo completado satisfactoriamente... "
+  sleep 3
+	return 0
+}
+
 clear
 usuario=$(whoami)
 if [ "$usuario" = "root" ]; then
@@ -137,6 +152,9 @@ if [ "$usuario" = "root" ]; then
         ;;
       esac
       ;;
+    5)
+      backup
+      ;;
     7)
       do=false
       ;;
@@ -146,4 +164,3 @@ else
   echo "No has ingresado como Usuario root :("
   exit
 fi
-
