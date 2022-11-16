@@ -39,6 +39,14 @@ user_modify_menu() {
   return $op
 }
 
+process_menu() {
+  echo "--- MENU PROCESOS ---
+  1) ps
+  2) top"
+  read -p "Seleccione una opcion: " op
+  return $op
+}
+
 clear
 usuario=$(whoami)
 if [ "$usuario" = "root" ]; then
@@ -113,6 +121,20 @@ if [ "$usuario" = "root" ]; then
         ;;
       4) ;;
       *) echo "Introdujo una operacion incorrecta" ;;
+      esac
+      ;;
+    3)
+      process_menu
+      case $? in
+      1)
+        echo ""
+        ps
+        read -t 7
+        echo ""
+        ;;
+      2)
+        top
+        ;;
       esac
       ;;
     7)
