@@ -50,7 +50,7 @@ process_menu() {
 backup()
 {
 	read -p "Nombre de usuario que se le realizara un respaldo: " user
-	homedir=$(cat /etc/passwd | grep "brandon" | cut -d ":" -f6)
+	homedir=$(cat /etc/passwd | grep ${user} | cut -d ":" -f6)
 	echo "El directorio home del usuario $user es $homedir "
 	echo "Creando archivo de respaldo..."
 	date=$(date +%F)
