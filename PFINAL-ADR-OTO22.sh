@@ -6,7 +6,7 @@ main_menu() {
   2 -> Gestion de Grupos
   3 -> Mostrar Procesos
   4 -> Ver Tareas Pendientes
-  5 -> Realizar Respalndos
+  5 -> Realizar Respaldos
   6 -> Realizar Monitoreo
   7 -> Salir"
   read -p "Seleccione una opcion: " op
