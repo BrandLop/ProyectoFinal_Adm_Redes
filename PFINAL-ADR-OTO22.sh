@@ -14,6 +14,18 @@ main_menu() {
   return $op
 }
 
+user_list() {
+  echo " --- Usuarios Existentes ---"
+  getent passwd {1000..1200} | cut -d: -f1
+  echo ""
+}
+
+group_list() {
+  echo " --- Grupos Existentes ---"
+  getent group {1000..1200} | cut -d: -f1
+  echo ""
+}
+
 user_management_menu() {
   echo "--- MENU GESTION DE USUARIOS ---
   1) Crear usuario
@@ -21,21 +33,37 @@ user_management_menu() {
   3) Eliminar usuario
   4) Regresar"
   read -p "Seleccione una opcion: " op2
+  echo ""
   return $op2
 }
 
 user_modify_menu() {
   echo "¿Que desea modificar?
   1) Nombre de usuario
-  2) Grupo al que pertenece
+  2) Grupo asignado
   3) Carpeta HOME
   4) Contraseña
   5) Vencimiento de contraseña
   6) Forzar cambio de contraseña
   7) Bloquear usuario
   8) Reactivar usuario
-  9) Caducidad de la cuenta de usuario"
+  9) Caducidad de la cuenta de usuario
+  10) Regresar"
   read -p ": " op
+  echo ""
+  return $op
+}
+
+group_menu(){
+  echo "--- GESTION DE GRUPOS ---
+  1) Crear grupo
+  2) Modificar nombre de grupo
+  3) Asignar usuario a un grupo
+  4) Eliminar usuarios de un grupo
+  5) Eliminar grupo
+  6) Regresar"
+  read -p "Seleccione una opcion: " op
+  echo ""
   return $op
 }
 
@@ -43,6 +71,15 @@ process_menu() {
   echo "--- MENU PROCESOS ---
   1) ps
   2) top"
+  read -p "Seleccione una opcion: " op
+  return $op
+}
+
+tareas_menu() {
+  echo "--- MENU TAREAS ---
+  1) Vista general
+  2) Vista por usuario
+  3) Regresar"
   read -p "Seleccione una opcion: " op
   return $op
 }
@@ -75,25 +112,50 @@ if [ "$usuario" = "root" ]; then
       case $? in
       1)
         read -p "Nombre de usuario: " nom
+	echo "El Usuario se ha creado correctamente"
         useradd $nom
-        echo "Usuario $nom creado"
         ;;
       2)
         user_modify_menu
         case $? in
         1)
-          read -p "Nombre de usuario: " nom
+	  user_list
+          read -p "Nombre de usuario a modificar: " nom
           read -p "Nuevo nombre de usuario: " nom2
+	  echo "Nombre de usuario modificado correctamente..."
           usermod -l $nom2 $nom
           ;;
         2)
+	  user_list
           read -p "Nombre de usuario: " nom
-          read -p "Nombre de grupo: " grupo
-          usermod -G $grupo
-          ;;
+	  echo "El usuario $nom pertenece a los siguientes grupos: " 
+	  id -nG $nom
+	  echo ""
+	  echo "1) Agregar usuario a un grupo existente"
+	  echo "2) Cambiar grupo primario"
+          echo "3) Eliminar usuario de un grupo (Distinto del primario)"
+          read -p ": " opc
+	  echo "" 
+	  case $opc in
+                1)
+		    group_list
+		    read -p "Nombre del grupo a agregar: " group
+                    usermod -a -G $group $nom
+                    ;;
+                2)
+		    read -p "Nombre del nuevo grupo primario: " group
+                    usermod -g $group $nom
+                    ;;
+		3)
+		    read -p "Nombre del grupo a eliminar: " group
+		    gpasswd -d $nom $group
+		    ;;
+            esac
+            ;; 
         3)
           read -p "Nombre de usuario: " nom
           read -p "Nombre de carpeta home: " carpeta
+	  echo "Se ha cambiado el nombre de la carpeta Home..."
           usermod -d /home/$carpeta $nom
           ;;
         4)
@@ -103,25 +165,30 @@ if [ "$usuario" = "root" ]; then
         5)
           read -p "Nombre de usuario: " nom
           read -p "Dias: " dias
+	  echo "Se configuro la fecha de vencimiento..." 
           chage -m $dias -M $dias $nom
           ;;
         6)
           read -p "Nombre de usuario: " nom
+	  echo "Listo..."
           chage -d 0 $nom
           ;;
         7)
           read -p "Nombre de usuario: " nom
+	  echo "Usuario bloqueado..."
           usermod -L $nom
           ;;
         8)
           read -p "Nombre de usuario: " nom
+	  echo "Listo..."
           usermod -U $nom
           ;;
         9)
           read -p "Nombre de usuario: " nom
-          read -p "Dia: " dia
-          read -p "Mes: " mes
-          read -p "Anio: " anio
+	  echo "- Indique fecha de vencimiento -"
+          read -p "(DD): " dia
+          read -p "(MM): " mes
+          read -p "(AAAA): " anio
           echo "hola $anio$mes$dia $nom"
           chage -E $anio$mes$dia $nom
           ;;
@@ -129,12 +196,59 @@ if [ "$usuario" = "root" ]; then
         esac
         ;;
       3)
+        user_list
         read -p "Nombre de usuario: " nom
+	echo "Usuario eliminado"
         userdel -r $nom
-        echo "Usuario $nom eliminado"
         ;;
-      4) ;;
-      *) echo "Introdujo una operacion incorrecta" ;;
+      esac
+      ;;
+    2)
+        clear
+        group_menu
+        case $? in
+        1)
+            read -p "Nombre de grupo: " nm_group
+            echo "El Grupo se ha creado correctamente"
+	    groupadd $nm_group
+            ;;
+        2)
+	    group_list
+            read -p "Nombre de grupo: " group
+            read -p "Nuevo nombre: " new_group
+	    echo "Listo..."
+            groupmod -n $new_group $group 
+            ;;
+	3)
+            group_list
+	    read -p "Seleccione un Grupo: " nm_group
+	    echo ""	    
+	    user_list
+            read -p "Seleccione un Usuario: " user
+            echo "El Usuario se agrego al grupo..."
+            usermod -a -G $nm_group $user
+	    ;;
+	4)
+	    group_list
+            read -p "Nombre de grupo: " nm_group
+            echo "El grupo contiene a los siguientes usuarios"
+            getent group $nm_group
+	    echo ""	    
+	    read -p "¿Desea continuar? (s/n): " op
+		case $op in
+			s)
+			    read -p "Nombre de usuario a eliminar del grupo: " user
+			    gpasswd -d $user $nm_group
+			    ;;
+		esac
+	    ;;
+	5)
+	    group_list
+            read -p "Grupo a eliminar: " nm_group
+	    echo "Grupo eliminado..."
+            groupdel $nm_group
+            ;;
+       *) "Introdujo una operacion incorrecta" ;;
       esac
       ;;
     3)
@@ -151,6 +265,27 @@ if [ "$usuario" = "root" ]; then
         ;;
       esac
       ;;
+   4)
+      tareas_menu
+      case $? in
+            1)
+		echo ""	
+   		echo "-> Tareas programadas en CRON <-"
+		cat /var/spool/cron/*
+		sleep 7
+                ;;
+            2)
+		echo ""
+		user_list
+                read -p "Nombre de usuario: " nom
+		echo ""
+		echo "-> Tareas programadas en CRON <-"
+                crontab -u $nom -l
+	        sleep 7
+                ;;
+            * ) echo "opcion no valida"
+        esac
+        ;;
     5)
       backup
       ;;
