@@ -103,6 +103,24 @@ backup() {
   return 0
 }
 
+network_monitoring_menu() {
+  echo "--- MENU MONITOREO ---
+  1) nmap
+  2) por_definir xd
+  3) Regresar"
+  read -p "Seleccione una opcion: " op
+  return $op
+}
+
+nmap_menu() {
+  echo "--- MENU NMAP ---
+  1) Escaneo de puertos
+  2) Informacion sobre el SO
+  3) Regresar"
+  read -p "Seleccione una opcion: " op
+  return $op
+}
+
 clear
 usuario=$(whoami)
 if [ "$usuario" = "root" ]; then
@@ -293,6 +311,28 @@ if [ "$usuario" = "root" ]; then
       ;;
     5)
       backup
+      ;;
+    6)
+      echo ""
+      network_monitoring_menu
+      case $? in
+      1)
+        echo ""
+        nmap_menu
+        case $? in
+        1)
+          read -p 'Ingrese una direccion IP a escanear: ' ip
+          echo "Escaneando $ip..."
+          nmap $ip
+          sleep 3
+          ;;
+        2) ;;
+        3) ;;
+        esac
+        ;;
+      2) ;;
+      3) ;;
+      esac
       ;;
     7)
       do=false
