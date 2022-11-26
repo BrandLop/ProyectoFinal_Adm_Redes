@@ -116,7 +116,8 @@ nmap_menu() {
   echo "--- MENU NMAP ---
   1) Escaneo de puertos
   2) Informacion sobre el SO
-  3) Regresar"
+  3) Información sobre los servicios instalados
+  4) Regresar"
   read -p "Seleccione una opcion: " op
   return $op
 }
@@ -324,10 +325,20 @@ if [ "$usuario" = "root" ]; then
           read -p 'Ingrese una direccion IP a escanear: ' ip
           echo "Escaneando $ip..."
           nmap $ip
-          sleep 3
+          sleep 7
           ;;
-        2) ;;
-        3) ;;
+        2)
+          read -p 'Ingrese una direccion IP del equipo a obtener info del SO: ' ip
+          echo "Escaneando $ip..."
+          nmap -A $ip
+          sleep 7
+          ;;
+        3)
+          read -p 'Ingrese una direccion IP del equipo a obtener info de sus servicios: ' ip
+          echo "Escaneando $ip..."
+          nmap -sV $ip
+          sleep 7 
+          ;;
         esac
         ;;
       2) ;;
