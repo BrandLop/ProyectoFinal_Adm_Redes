@@ -122,6 +122,20 @@ nmap_menu() {
   return $op
 }
 
+tshark_menu() {
+  echo "--- MENU WIRESHARK ---
+  1) Escaneo de interfaces disponibles
+  2) Captura del trafico de red por identificador de interfaz
+  3) Captura del trafico de red por identificador de interfaz y duracion de captura (En segundos)
+  4) Captura del trafico de red por identificador de interfaz y numero de paquetes a capturar
+  5) Captura del trafico de red por nombre de la interfaz
+  6) Captura del trafico de red por nombre de la interfaz y duracion de captura (En segundos)
+  7) Captura del trafico de red por nombre de la interfaz y numero de paquetes a capturar
+  8) Regresar"
+  read -p "Seleccione una opcion: " op
+  return $op
+}
+
 clear
 usuario=$(whoami)
 if [ "$usuario" = "root" ]; then
