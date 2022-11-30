@@ -398,6 +398,15 @@ if [ "$usuario" = "root" ]; then
           read -p 'Ingrese duracion del escaneo (en segundos): ' duration
           tshark -i $int_name -a duration:$duration
           sleep 7
+          ;;
+        7) 
+          tshark -D
+          echo ""
+          read -p 'Ingrese el nombre de la interfaz a escanear: ' int_name
+          read -p 'Ingrese el numero de paquetes a escanear: ' pack
+          tshark -i $int_name -c $pack
+          sleep 7
+          ;;
         esac
         ;;
       3) ;;
@@ -410,5 +419,6 @@ if [ "$usuario" = "root" ]; then
   done
 else
   echo "No has ingresado como Usuario root :("
+  sleep 5
   exit
 fi
