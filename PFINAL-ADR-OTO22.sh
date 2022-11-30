@@ -391,6 +391,13 @@ if [ "$usuario" = "root" ]; then
           read -p 'Ingrese el nombre de la interfaz a escanear: ' int_name
           tshark -i $int_name
           ;;  
+        6)
+          tshark -D
+          echo ""
+          read -p 'Ingrese el nombre de la interfaz a escanear: ' int_name
+          read -p 'Ingrese duracion del escaneo (en segundos): ' duration
+          tshark -i $int_name -a duration:$duration
+          sleep 7
         esac
         ;;
       3) ;;
