@@ -106,7 +106,7 @@ backup() {
 network_monitoring_menu() {
   echo "--- MENU MONITOREO ---
   1) nmap
-  2) por_definir xd
+  2) wireshark
   3) Regresar"
   read -p "Seleccione una opcion: " op
   return $op
