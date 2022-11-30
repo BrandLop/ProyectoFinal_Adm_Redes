@@ -352,10 +352,19 @@ if [ "$usuario" = "root" ]; then
           echo "Escaneando $ip..."
           nmap -sV $ip
           sleep 7 
+          ;;  
+        esac
+        ;;
+      2)
+        echo ""
+        tshark_menu
+        case $? in
+        1)
+          tshark -D
+          sleep 7
           ;;
         esac
         ;;
-      2) ;;
       3) ;;
       esac
       ;;
