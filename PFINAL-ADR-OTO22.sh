@@ -363,6 +363,20 @@ if [ "$usuario" = "root" ]; then
           tshark -D
           sleep 7
           ;;
+        2)
+          tshark -D
+          echo ""
+          read -p 'Ingrese el identificador de la interfaz a escanear: ' int_num
+          tshark -i $int_num
+          ;;
+        3)
+
+          ;;
+        4)
+
+          ;;
+        5)
+          ;;
         esac
         ;;
       3) ;;
