@@ -378,6 +378,12 @@ if [ "$usuario" = "root" ]; then
           sleep 7
           ;;
         4)
+          tshark -D
+          echo ""
+          read -p 'Ingrese el nombre de la interfaz a escanear: ' int_num
+          read -p 'Ingrese el numero de paquetes a escanear: ' pack
+          tshark -i $int_num -c $pack
+          sleep 7
           ;;
         5) 
           ;;  
